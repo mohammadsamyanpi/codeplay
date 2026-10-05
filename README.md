@@ -2,6 +2,10 @@
 
 A responsive recreation of the supplied CodePlay design, with a landing page, local learner dashboard, playable Python quest and badge celebration. Built with HTML, CSS and JavaScript; no Node installation or build step required.
 
+Live site: https://mohammadsamyanpi.github.io/codeplay/
+
+Repository: https://github.com/mohammadsamyanpi/codeplay
+
 ## Run locally
 
 ```powershell
@@ -33,7 +37,7 @@ UI dictionaries are in `translations` in `app.js`. Add a complete dictionary, a 
 
 ## Publishing
 
-The files in the repository root can be served directly by GitHub Pages. Select the `main` branch and root folder in Pages settings. Do not publish `tmp/` or the original source PDF/text files. No credentials belong in this repository.
+GitHub Pages serves the `main` branch and root folder. Pushing changes to `main` triggers publication. Do not publish `tmp/` or the original source PDF/text files. No credentials belong in this repository.
 
 ## Design assets
 

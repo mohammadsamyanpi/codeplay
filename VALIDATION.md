@@ -28,7 +28,16 @@ Verified in Chrome after reconnecting the extension:
 - Persian RTL, light/dark switching, search filtering and its empty state were checked.
 - Light-theme syntax and statistic colors were adjusted for readability.
 
-The remaining acceptance checklist below also covers checks that have not yet been exercised in the browser, including the infinite-loop timeout and clearing local progress.
+Public deployment verified on October 5, 2026:
+
+- GitHub Pages built successfully with HTTPS enabled.
+- The page, JavaScript, CSS, Python worker, illustrations and font returned HTTP 200.
+- Real Python execution also passed all three checks on the published origin.
+- A deliberate infinite loop stopped after 60 seconds and re-enabled Run code.
+- FAQ expansion worked using the Enter key; the privacy dialog opened and closed.
+- Persian language, RTL direction and the light theme persisted after reload.
+
+Clearing local progress has not been exercised in the browser. The checklist below is retained for subsequent releases.
 
 ## Mapping to the supplied 32 corrections
 
