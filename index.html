@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="description" content="Learn real Python through playful, hands-on coding quests. Your first superpower starts with one line.">
+  <title>CodePlay — Small quests. Big coding powers.</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" type="module"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="header">
+    <div class="container header-inner">
+      <a class="brand" href="#home"><img src="assets/logo.svg" width="30" height="30" alt=""><span>Code<span>Play</span></span></a>
+      <nav aria-label="Main navigation" id="navigation"></nav>
+      <div class="tools">
+        <label class="sr-only" for="language">Language</label>
+        <select id="language"><option value="en">English</option><option value="fa">فارسی</option></select>
+        <button class="icon-button" id="theme" aria-label="Switch color theme">☼</button>
+        <a href="#dashboard" class="button small" data-i18n="start">Start playing for free</a>
+        <button class="icon-button menu" id="menu" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+  <main id="main" tabindex="-1"></main>
+  <footer id="footer"></footer>
+  <button id="back-top" class="icon-button back-top" aria-label="Back to top" hidden>↑</button>
+  <dialog id="modal"><button class="icon-button close" aria-label="Close dialog">×</button><div id="modal-content"></div></dialog>
+  <div id="notice" class="notice" role="status" hidden></div>
+</body>
+</html>
