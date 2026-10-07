@@ -11,6 +11,7 @@ export function createSupabaseAPI(config, loadSDK = defaultSDK) {
     if (known.includes(error.message)) return fail(error.message);
     if (error.code === 'PGRST202' || error.code === '42883') return fail('setup_required');
     if (error.code === 'email_not_confirmed') return fail('email_not_confirmed');
+    if (error.code === 'email_redirect_to_not_allowed' || error.code === 'redirect_to_not_allowed') return fail('redirect_not_allowed');
     if (error.code === 'invalid_credentials') return fail('wrong_credentials');
     if (error.status === 429 || error.code?.includes('rate_limit')) return fail('too_many_attempts');
     if (['email_address_invalid', 'email_address_not_authorized', 'over_email_send_rate_limit', 'unexpected_failure'].includes(error.code)) return fail('email_delivery');

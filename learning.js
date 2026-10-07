@@ -22,6 +22,7 @@ export function createLearning({ language, notify, changed }) {
     invalid_email_credentials: ['Enter a valid email and a password of 10–128 characters.', 'ایمیل معتبر و رمز ۱۰ تا ۱۲۸ نویسه وارد کن.'],
     weak_password: ['Choose a stronger password.', 'رمز عبور قوی‌تری انتخاب کن.'],
     email_delivery: ['Supabase could not send the confirmation email.', 'سوپابیس نتوانست ایمیل تأیید را بفرستد.'],
+    redirect_not_allowed: ['Add the GitHub Pages URL to Supabase Auth URL Configuration.', 'آدرس GitHub Pages را در تنظیمات URL احراز هویت Supabase اضافه کن.'],
     pro_required: ['This quest requires a Pro account.', 'این مرحله به حساب پرو نیاز دارد.'],
     invalid_credentials: ['Use a 3–32 character username (letters, numbers, underscore) and a 10–128 character password.', 'نام کاربری ۳ تا ۳۲ حرف انگلیسی، رقم یا زیرخط و رمز ۱۰ تا ۱۲۸ نویسه باشد.'],
     wrong_credentials: ['Username or password is incorrect.', 'نام کاربری یا رمز عبور نادرست است.'],
@@ -65,7 +66,7 @@ export function createLearning({ language, notify, changed }) {
     } catch { available = false; }
   }
   function nav() {
-    return `<a href="#${profile ? 'profile' : 'login'}">${text(profile ? 'My profile' : 'Sign in', profile ? 'پروفایل من' : 'ورود')}</a>`;
+    return `<a class="button small header-account" href="#${profile ? 'profile' : 'login'}">${text(profile ? 'My profile' : 'Sign in', profile ? 'پروفایل من' : 'ورود')}</a>`;
   }
   function shell(body) {
     return `<div class="container dashboard-shell"><aside class="sidebar"><a href="#dashboard">${text('Quest map', 'نقشه‌ی مراحل')}</a><a href="#profile">${text('My profile', 'پروفایل من')}</a><a href="#practice">${text('Practice lab', 'آزمایشگاه تمرین')}</a><a href="#dashboard/pro">${text('Pro missions', 'مأموریت‌های پرو')}</a><a href="#home">${text('Home', 'خانه')}</a></aside><div class="dashboard-content">${body}</div></div>`;
