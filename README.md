@@ -1,44 +1,46 @@
 # CodePlay
 
-A responsive recreation of the supplied CodePlay design, with a landing page, local learner dashboard, playable Python quest and badge celebration. Built with HTML, CSS and JavaScript; no Node installation or build step required.
-
-Live site: https://mohammadsamyanpi.github.io/codeplay/
-
-Repository: https://github.com/mohammadsamyanpi/codeplay
+A bilingual English/Persian learning app with account-based Python and Django quests. The existing landing page, assets, themes and browser Python editor are preserved. No Node installation or build step is required.
 
 ## Run locally
 
+Requires Python 3.11 or newer, with no additional packages.
+
 ```powershell
-python -m http.server 8000 --bind 127.0.0.1
+python server.py
 ```
 
-Open `http://127.0.0.1:8000`. Serve over HTTP rather than opening `index.html` directly, because modules and Web Workers need an HTTP origin.
+Open `http://127.0.0.1:8000/`. Register an account before playing. Accounts and progress are stored in `data/codeplay.sqlite3`; that directory is excluded from Git. Use the account server rather than a generic static file server.
 
-## Implemented
+## Learning paths
 
-- Single responsive layout rather than duplicated desktop/mobile content.
-- English and Persian interface, RTL, bundled Persian font, light/dark themes.
-- Searchable worlds, accessible FAQ, visible focus, reduced motion and back-to-top.
-- Editable, syntax-highlighted Python with real execution through Pyodide 0.29.2 in a Web Worker. Execution terminates after 60 seconds to recover from infinite loops.
-- Actual quest checks: a nonempty string variable `name`, the exact greeting and successful console output.
-- Completion awards 50 XP once. All totals, badges and streak dates derive from saved completion state. Replaying never grants duplicate points.
-- Local code/progress storage and an explicit clear-data action.
-- Honest roadmap labels, feature comparison, privacy, terms, cancellation notice and accessibility information.
+- Free: 24 quests — 20 Python fundamentals and four broad Django introductions.
+- Pro: 20 separate missions — six advanced Python and 14 detailed Django exercises.
+- Six exercise types: multiple choice, missing code, output prediction, debugging, line ordering, and guided projects with multiple code gaps.
+- Any quest in an account's available path can be opened without sequential locks.
+- Correct answers award 50 XP once per quest. Hints and bilingual explanations accompany each quest.
+- Profiles show the current stage, next unfinished stage, completion history, XP, streak and separate Free/Pro totals. Progress is shared across devices signing into the same server account.
 
-## Limits
+All registrations create Free accounts. The administrator grants Pro with `python server.py --grant-pro USERNAME` and removes it with `--revoke-pro USERNAME`. No checkout or automatic paid subscription is connected.
 
-This is a functioning frontend learning prototype, not a complete commercial learning platform. Only the first Python quest is implemented. Remaining Python lessons, Logic Caverns, Django courses, authentication, cloud sync, live AI, certificates, real reviews, public leagues, subscriptions and newsletter delivery need additional backend/content work. None are presented as active. Proposed Pro pricing is not a sale or checkout.
+## Accounts and execution
 
-The first Python run needs internet access to `cdn.jsdelivr.net`; loading the WebAssembly runtime may take up to a minute. Python runs locally in the browser. Never enter sensitive data into the editor. Local progress is per browser and is lost when browser storage is cleared. Runtime errors are shown in the console.
+The backend validates authentication and plan access for quest content and answers. Passwords use salted PBKDF2 hashes; session cookies are HttpOnly. Authenticated writes require CSRF tokens and matching origins. Server-side completion records prevent duplicate XP, including concurrent submissions. Private source and database files are excluded from HTTP serving.
 
-## Languages
+The practice editor runs real Python via Pyodide 0.29.2 in a Web Worker, with a 60-second limit. Its first run needs internet access to jsDelivr. Editor drafts, language and theme remain local; completed quests are stored in the account. The server checks structured exercise answers and never executes submitted Python. Django exercises teach code through questions and guided scaffolds; this app does not execute learner-created Django websites.
 
-UI dictionaries are in `translations` in `app.js`. Add a complete dictionary, a language option, locale formatting and direction configuration to support another language. English and Persian are currently translated; universal language support is not claimed. Python is the only executable programming language in this version.
+## Verification
 
-## Publishing
+```powershell
+python test_server.py
+```
 
-GitHub Pages serves the `main` branch and root folder. Pushing changes to `main` triggers publication. Do not publish `tmp/` or the original source PDF/text files. No credentials belong in this repository.
+The 11 integration tests cover guest restrictions, Pro authorization, sessions, CSRF/origin checks, account isolation, progress across devices, all 44 lessons, duplicate/concurrent XP and private-file protection. See [VALIDATION.md](VALIDATION.md) for current evidence and limits.
 
-## Design assets
+## Hosting
 
-`hero.webp` and `pip.webp` were extracted from the user-supplied PDF. The bundled Vazirmatn font uses the SIL Open Font License; see `assets/OFL.txt`. The logo and persona illustrations are SVG/vector assets. Persona stories are explicitly fictional illustrations, not testimonials from real customers.
+The existing public site uses GitHub Pages. Pages cannot run this account API. This version must be hosted with a Python process, HTTPS and persistent storage; see [DEPLOYMENT.md](DEPLOYMENT.md). Do not replace the public static preview until that deployment is verified. A Dockerfile is included. The dependency-free HTTP server is suitable for local development and a small pilot behind an HTTPS proxy; a larger public launch needs production hosting, durable rate limiting, monitoring, password recovery, account export/deletion and backups.
+
+## Sources and assets
+
+Learning format research and primary references are recorded in [RESEARCH.md](RESEARCH.md). Lessons are original bilingual content. Existing hero and robot images were extracted from the original supplied design. Vazirmatn uses the SIL Open Font License in `assets/OFL.txt`. Persona stories remain explicitly illustrative, rather than customer reviews.
