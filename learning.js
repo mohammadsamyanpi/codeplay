@@ -1,3 +1,6 @@
+import { siteConfig } from './site-config.js';
+import { createSupabaseAPI } from './supabase-api.js';
+
 // Account and quest UI. Answers and access checks belong to the server.
 export function createLearning({ language, notify, changed }) {
   let profile = null;
@@ -6,12 +9,19 @@ export function createLearning({ language, notify, changed }) {
   let generation = 0;
   let returnTo = 'dashboard';
   let catalog = [];
+  const hosted = location.hostname.endsWith('github.io') || location.hostname.endsWith('pages.dev');
+  const hostedAPI = hosted ? createSupabaseAPI(siteConfig, async () => (await import('https://esm.sh/@supabase/supabase-js@2.117.2')).createClient) : null;
   const e = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const text = (en, fa) => language() === 'fa' ? fa : en;
   const localized = value => typeof value === 'object' ? value[language()] || value.en : value;
   const types = { quiz: ['Choose an answer', 'انتخاب پاسخ'], blank: ['Complete the code', 'تکمیل کد'], output: ['Predict the output', 'پیش‌بینی خروجی'], debug: ['Find and fix the error', 'پیدا کردن و اصلاح خطا'], order: ['Arrange the lines', 'مرتب‌سازی خطوط'], project: ['Guided mini project', 'پروژه‌ی کوچک هدایت‌شده'] };
   const errors = {
     login_required: ['Sign in to play this quest.', 'برای بازی کردن این مرحله وارد شو.'],
+    setup_required: ['The learning database still needs to be initialized by the site owner.', 'پایگاه داده‌ی آموزشی هنوز باید توسط مدیر سایت راه‌اندازی شود.'],
+    email_not_confirmed: ['Check your email and confirm your account before signing in.', 'ایمیلت را تأیید کن، سپس وارد شو.'],
+    invalid_email_credentials: ['Enter a valid email and a password of 10–128 characters.', 'ایمیل معتبر و رمز ۱۰ تا ۱۲۸ نویسه وارد کن.'],
+    weak_password: ['Choose a stronger password.', 'رمز عبور قوی‌تری انتخاب کن.'],
+    email_delivery: ['Supabase could not send the confirmation email.', 'سوپابیس نتوانست ایمیل تأیید را بفرستد.'],
     pro_required: ['This quest requires a Pro account.', 'این مرحله به حساب پرو نیاز دارد.'],
     invalid_credentials: ['Use a 3–32 character username (letters, numbers, underscore) and a 10–128 character password.', 'نام کاربری ۳ تا ۳۲ حرف انگلیسی، رقم یا زیرخط و رمز ۱۰ تا ۱۲۸ نویسه باشد.'],
     wrong_credentials: ['Username or password is incorrect.', 'نام کاربری یا رمز عبور نادرست است.'],
@@ -24,6 +34,7 @@ export function createLearning({ language, notify, changed }) {
   };
   const errorText = error => text(...(errors[error.code] || ['Something went wrong. Please try again.', 'مشکلی پیش آمد؛ دوباره تلاش کن.']));
   async function request(path, data) {
+    if (hostedAPI) return hostedAPI.request(path, data);
     let response;
     try {
       response = await fetch(`/api/${path}`, {
@@ -60,7 +71,7 @@ export function createLearning({ language, notify, changed }) {
     return `<div class="container dashboard-shell"><aside class="sidebar"><a href="#dashboard">${text('Quest map', 'نقشه‌ی مراحل')}</a><a href="#profile">${text('My profile', 'پروفایل من')}</a><a href="#practice">${text('Practice lab', 'آزمایشگاه تمرین')}</a><a href="#dashboard/pro">${text('Pro missions', 'مأموریت‌های پرو')}</a><a href="#home">${text('Home', 'خانه')}</a></aside><div class="dashboard-content">${body}</div></div>`;
   }
   function auth(main, register) {
-    main.innerHTML = `<section class="container section"><div class="card auth-card"><div class="eyebrow">CODEPLAY</div><h1>${text(register ? 'Create your account' : 'Welcome back', register ? 'حساب خودت را بساز' : 'دوباره خوش آمدی')}</h1><p>${text('Sign in before starting a quest. Your progress belongs to your account.', 'پیش از شروع مرحله وارد شو. پیشرفت در حساب شخصی تو ذخیره می‌شود.')}</p>${!available ? `<p class="hint">${text(...errors.offline)}</p>` : ''}<form id="account-form" class="account-form">${register ? `<label>${text('Display name', 'نام نمایشی')}<input name="display_name" required maxlength="60" autocomplete="nickname"></label>` : ''}<label>${text('Username', 'نام کاربری')}<input name="username" required pattern="[A-Za-z0-9_]{3,32}" minlength="3" maxlength="32" autocomplete="username" dir="ltr" autocapitalize="none" spellcheck="false"></label><label>${text('Password (at least 10 characters)', 'رمز عبور (حداقل ۱۰ نویسه)')}<input name="password" type="password" required minlength="10" maxlength="128" autocomplete="${register ? 'new-password' : 'current-password'}" dir="ltr"></label><p id="account-error" role="alert" class="form-error" hidden></p><button class="button">${text(register ? 'Create account' : 'Sign in', register ? 'ثبت‌نام' : 'ورود')}</button></form><p class="meta">${text(register ? 'Already registered?' : 'New to CodePlay?', register ? 'قبلاً ثبت‌نام کرده‌ای؟' : 'حساب نداری؟')} <a class="text-link" href="#${register ? 'login' : 'register'}">${text(register ? 'Sign in' : 'Create account', register ? 'ورود' : 'ثبت‌نام')}</a></p></div></section>`;
+    main.innerHTML = `<section class="container section"><div class="card auth-card"><div class="eyebrow">CODEPLAY</div><h1>${text(register ? 'Create your account' : 'Welcome back', register ? 'حساب خودت را بساز' : 'دوباره خوش آمدی')}</h1><p>${text('Sign in before starting a quest. Your progress belongs to your account.', 'پیش از شروع مرحله وارد شو. پیشرفت در حساب شخصی تو ذخیره می‌شود.')}</p>${!available ? `<p class="hint">${text(...errors.offline)}</p>` : ''}<form id="account-form" class="account-form">${register ? `<label>${text('Display name', 'نام نمایشی')}<input name="display_name" required maxlength="60" autocomplete="nickname"></label>` : ''}<label>${text(hosted ? 'Email' : 'Username', hosted ? 'ایمیل' : 'نام کاربری')}<input name="${hosted ? 'email' : 'username'}" required ${hosted ? 'type=\"email\" autocomplete=\"email\"' : 'pattern=\"[A-Za-z0-9_]{3,32}\" minlength=\"3\" maxlength=\"32\" autocomplete=\"username\"'} dir="ltr" autocapitalize="none" spellcheck="false"></label><label>${text('Password (at least 10 characters)', 'رمز عبور (حداقل ۱۰ نویسه)')}<input name="password" type="password" required minlength="10" maxlength="128" autocomplete="${register ? 'new-password' : 'current-password'}" dir="ltr"></label><p id="account-error" role="alert" class="form-error" hidden></p><button class="button">${text(register ? 'Create account' : 'Sign in', register ? 'ثبت‌نام' : 'ورود')}</button></form><p class="meta">${text(register ? 'Already registered?' : 'New to CodePlay?', register ? 'قبلاً ثبت‌نام کرده‌ای؟' : 'حساب نداری؟')} <a class="text-link" href="#${register ? 'login' : 'register'}">${text(register ? 'Sign in' : 'Create account', register ? 'ورود' : 'ثبت‌نام')}</a></p></div></section>`;
     main.querySelector('#account-form').addEventListener('submit', async event => {
       event.preventDefault();
       const form = event.currentTarget;

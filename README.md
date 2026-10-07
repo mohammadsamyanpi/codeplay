@@ -41,6 +41,14 @@ The 11 integration tests cover guest restrictions, Pro authorization, sessions, 
 
 The existing public site uses GitHub Pages. Pages cannot run this account API. This version must be hosted with a Python process, HTTPS and persistent storage; see [DEPLOYMENT.md](DEPLOYMENT.md). Do not replace the public static preview until that deployment is verified. A Dockerfile is included. The dependency-free HTTP server is suitable for local development and a small pilot behind an HTTPS proxy; a larger public launch needs production hosting, durable rate limiting, monitoring, password recovery, account export/deletion and backups.
 
+## GitHub Pages + Supabase
+
+The hosted GitHub Pages build now uses the public Supabase URL and publishable key in `site-config.js`. It loads the Supabase browser SDK from esm.sh only on the GitHub Pages origin; local development continues to use `server.py`.
+
+To activate accounts on the published site, open the Supabase **SQL Editor**, paste the complete contents of `supabase/setup.sql`, and run it once. Then set the Supabase Auth URL configuration: add `https://mohammadsamyanpi.github.io/codeplay/` to **Site URL** and to the allowed redirect URLs. Email confirmation is enabled in the current project, so learners must confirm their email before their first sign-in. The SQL script seeds all 44 lessons, creates protected profile/completion tables, and exposes only the required authenticated RPCs.
+
+Never put `SUPABASE_SECRET_KEY` in this repository or in a browser. Rotate the secret key if it has been exposed. `SUPABASE_JWKS_URL` is for a separate token-verifying backend and is not needed by the GitHub Pages client.
+
 ## Sources and assets
 
 Learning format research and primary references are recorded in [RESEARCH.md](RESEARCH.md). Lessons are original bilingual content. Existing hero and robot images were extracted from the original supplied design. Vazirmatn uses the SIL Open Font License in `assets/OFL.txt`. Persona stories remain explicitly illustrative, rather than customer reviews.

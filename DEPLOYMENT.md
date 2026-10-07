@@ -1,5 +1,9 @@
 # Deploying the account version
 
+## GitHub Pages without a separate server
+
+The account version can stay on the existing GitHub Pages URL by using Supabase as the hosted auth/database service. The repository contains `site-config.js`, `supabase-api.js`, and the generated `supabase/setup.sql`. Run that SQL once in the Supabase SQL Editor, configure the GitHub Pages URL under Auth URL Configuration, and publish the branch that contains these files. Keep only the publishable key in the browser; never add the secret key.
+
 This version needs a Python process and persistent SQLite storage. GitHub Pages only serves static files; committing this code does not deploy the account API. Keep the existing public Pages site until the Python deployment is verified.
 
 ## Local preview
