@@ -260,7 +260,7 @@ class Handler(SimpleHTTPRequestHandler):
     def public_file(self):
         # Allowlist prevents exposing SQLite, solutions, Python, .git or deployment config.
         path = urlsplit(self.path).path
-        if path in ('/', '/index.html', '/app.js', '/learning.js', '/styles.css', '/python-worker.js'):
+        if path in ('/', '/index.html', '/app.js', '/learning.js', '/site-config.js', '/supabase-api.js', '/styles.css', '/python-worker.js'):
             return True
         return path in {f'/assets/{file.name}' for file in (ROOT / 'assets').iterdir() if file.is_file()}
 
