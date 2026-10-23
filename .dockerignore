@@ -1,0 +1,7 @@
+.git
+data
+tmp
+__pycache__
+.env*
+*.log
+*.sqlite3*

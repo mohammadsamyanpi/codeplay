@@ -6,3 +6,6 @@ __pycache__/
 .gapcode/
 .agents/
 .aws/
+data/
+*.sqlite3
+*.sqlite3-*
