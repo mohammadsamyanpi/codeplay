@@ -1,5 +1,31 @@
 # Deploying the account version
 
+## Shared Supabase accounts on GitHub Pages and Render
+
+`site-config.js` selects the account provider on every hostname. With
+`provider: 'supabase'`, both deployments use email/password authentication and
+the same Supabase project for accounts, profiles and quest progress. Render's
+Python server serves the frontend; its SQLite API is not used by this configuration.
+
+Deploy the same repository revision on both hosts. In Supabase **Authentication >
+URL Configuration**, choose the preferred public address as **Site URL** and add
+both of these exact addresses to **Redirect URLs**:
+
+- `https://mohammadsamyanpi.github.io/codeplay/`
+- `https://codeplay-b4dh.onrender.com/`
+
+Run `supabase/setup.sql` once if this Supabase project has not been initialized.
+Verify new registrations under **Authentication > Users**; when confirmation is
+enabled, confirm the email before signing in. The private application profile is
+created on the first authenticated profile request. Sign into the other host with
+the same email/password to verify shared progress. Browser sessions remain
+separate for the two origins.
+
+Existing SQLite accounts and progress are not migrated by changing the provider.
+Preserve the old database if those records need a separate migration. To explicitly
+use the legacy local SQLite backend, change the provider to `sqlite` in a local
+configuration; it will then use username/password authentication.
+
 ## GitHub Pages without a separate server
 
 The account version can stay on the existing GitHub Pages URL by using Supabase as the hosted auth/database service. The repository contains `site-config.js`, `supabase-api.js`, and the generated `supabase/setup.sql`. Run that SQL once in the Supabase SQL Editor, configure the GitHub Pages URL under Auth URL Configuration, and publish the branch that contains these files. Keep only the publishable key in the browser; never add the secret key.

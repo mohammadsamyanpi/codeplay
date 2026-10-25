@@ -9,7 +9,8 @@ export function createLearning({ language, notify, changed }) {
   let generation = 0;
   let returnTo = 'dashboard';
   let catalog = [];
-  const hosted = location.hostname.endsWith('github.io') || location.hostname.endsWith('pages.dev');
+  // Use the same account store on every deployment, including Render.
+  const hosted = siteConfig.provider === 'supabase';
   const hostedAPI = hosted ? createSupabaseAPI(siteConfig, async () => (await import('https://esm.sh/@supabase/supabase-js@2.117.2')).createClient) : null;
   const e = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const text = (en, fa) => language() === 'fa' ? fa : en;

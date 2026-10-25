@@ -43,7 +43,7 @@ The existing public site uses GitHub Pages. Pages cannot run this account API. T
 
 ## GitHub Pages + Supabase
 
-The hosted GitHub Pages build now uses the public Supabase URL and publishable key in `site-config.js`. It loads the Supabase browser SDK from esm.sh only on the GitHub Pages origin; local development continues to use `server.py`.
+All deployments, including GitHub Pages, Render and local previews, use the account provider in `site-config.js`. With `provider: 'supabase'`, they load the Supabase browser SDK from esm.sh and share email/password accounts and progress in the configured Supabase project. See [DEPLOYMENT.md](DEPLOYMENT.md#shared-supabase-accounts-on-github-pages-and-render) for both allowed confirmation redirect URLs and legacy SQLite configuration.
 
 To activate accounts on the published site, open the Supabase **SQL Editor**, paste the complete contents of `supabase/setup.sql`, and run it once. Then set the Supabase Auth URL configuration: add `https://mohammadsamyanpi.github.io/codeplay/` to **Site URL** and to the allowed redirect URLs. Email confirmation is enabled in the current project, so learners must confirm their email before their first sign-in. The SQL script seeds all 44 lessons, creates protected profile/completion tables, and exposes only the required authenticated RPCs.
 
