@@ -1,3 +1,4 @@
+import { siteConfig } from './site-config.js';
 import { createLearning } from './learning.js';
 const translations = {
   en: {
@@ -21,7 +22,7 @@ Object.assign(translations.en, {
   proInfo: 'Pro includes 20 separate missions. The site administrator activates Pro accounts. Checkout and automatic subscriptions are not available.',
   answer3: 'Yes. The free path covers Python and a broad Django introduction. Pro includes detailed Django code exercises; Django apps run on a server, not inside the browser editor.',
   answer5: 'Yes, when using the account server. Sign in with the same account on another device to see your completed quests and current stage. Practice editor drafts remain on this device.',
-  privacyText: 'The server stores your username, display name, password hash, sessions, plan and completed quests. The browser stores language, theme and practice code. An HttpOnly session cookie keeps you signed in. Python runtime files load from jsDelivr. Clearing local drafts does not delete your account or server progress.',
+  privacyText: 'The server stores your username, display name, password hash, sessions, plan and completed quests. The browser stores language, theme and practice code. An HttpOnly session cookie keeps you signed in. Contact messages, including your name and email, are stored in Supabase. Python runtime files load from jsDelivr. Clearing local drafts does not delete your account or server progress.',
   termsText: 'CodePlay provides 24 free quests and 20 Pro missions. Pro access is managed by the administrator; no checkout, recurring billing or certificate is offered. Illustrative learner stories are fictional examples.',
   aboutText: 'CodePlay teaches Python and Django through 44 bilingual quests, six exercise types, personal profiles and account-based progress.',
   helpText: 'Create an account, select a quest and submit your answer. A correct answer saves progress and awards 50 XP once. Review any available quest at any time. The practice lab runs real Python with Ctrl/Cmd + Enter.',
@@ -42,7 +43,7 @@ Object.assign(translations.fa, {
   proInfo: 'پرو شامل ۲۰ مأموریت جداگانه است. مدیر سایت حساب‌های پرو را فعال می‌کند. پرداخت و اشتراک خودکار هنوز راه‌اندازی نشده است.',
   answer3: 'بله. مسیر رایگان پایتون و معرفی کلی جنگو را پوشش می‌دهد. پرو تمرین‌های دقیق کد جنگو دارد؛ اپ جنگو روی سرور اجرا می‌شود، نه داخل ویرایشگر مرورگر.',
   answer5: 'بله، در نسخه‌ی دارای سرور حساب‌ها. با همان حساب در دستگاه دیگر وارد شو تا مراحل تکمیل‌شده و مرحله‌ی فعلی را ببینی. پیش‌نویس ویرایشگر تمرین روی همین دستگاه می‌ماند.',
-  privacyText: 'سرور نام کاربری، نام نمایشی، هش رمز، نشست‌ها، پلن و مراحل تکمیل‌شده را ذخیره می‌کند. زبان، ظاهر و کد تمرین در مرورگر ذخیره می‌شوند. کوکی HttpOnly ورود را حفظ می‌کند. فایل‌های اجرای پایتون از jsDelivr بارگیری می‌شوند. پاک کردن پیش‌نویس محلی، حساب یا پیشرفت سرور را حذف نمی‌کند.',
+  privacyText: 'سرور نام کاربری، نام نمایشی، هش رمز، نشست‌ها، پلن و مراحل تکمیل‌شده را ذخیره می‌کند. زبان، ظاهر و کد تمرین در مرورگر ذخیره می‌شوند. کوکی HttpOnly ورود را حفظ می‌کند. پیام تماس، شامل نام و ایمیل، در Supabase ذخیره می‌شود. فایل‌های اجرای پایتون از jsDelivr بارگیری می‌شوند. پاک کردن پیش‌نویس محلی، حساب یا پیشرفت سرور را حذف نمی‌کند.',
   termsText: 'کدپلی ۲۴ مرحله‌ی رایگان و ۲۰ مأموریت پرو ارائه می‌دهد. مدیر دسترسی پرو را فعال می‌کند؛ پرداخت، صورتحساب دوره‌ای یا گواهی ارائه نمی‌شود. داستان‌های نمونه‌ی کاربران فرضی‌اند.',
   aboutText: 'کدپلی پایتون و جنگو را با ۴۴ مرحله‌ی دوزبانه، شش نوع تمرین، پروفایل شخصی و پیشرفت ذخیره‌شده در حساب آموزش می‌دهد.',
   helpText: 'حساب بساز، مرحله را انتخاب کن و پاسخ بده. پاسخ درست پیشرفت را ذخیره می‌کند و یک بار ۵۰ امتیاز می‌دهد. مراحل در دسترس را هر زمان مرور کن. آزمایشگاه تمرین پایتون واقعی را با Ctrl/Cmd + Enter اجرا می‌کند.',
@@ -70,6 +71,8 @@ let lastOutput = '';
 let noticeTimer;
 const main = document.querySelector('#main');
 const modal = document.querySelector('#modal');
+translations.en.contact = 'Contact us';
+translations.fa.contact = 'تماس با ما';
 const t = key => translations[state.language][key] || translations.en[key] || key;
 const escapeHtml = text => String(text).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
 const number = value => new Intl.NumberFormat(state.language === 'fa' ? 'fa-IR' : 'en-US').format(value);
@@ -127,7 +130,7 @@ function renderQuest(practice = false) {
   main.innerHTML = `<div class="container quest-layout"><aside class="quest-instructions"><a class="text-link meta" href="#dashboard">← ${t('dashboard')}</a><div class="eyebrow" style="margin-top:25px">PYTHON · ${t('beginner')} · +50 XP</div><h2>${t(practice ? 'practice' : 'spell')}</h2><p style="font-size:14px">${t('questDescription')}</p><div class="card"><h3>${t('goals')}</h3><ul class="goals">${goalMarkup()}</ul><button class="button secondary small" id="show-hint" aria-expanded="false">${t('hints')}</button><p class="hint" id="quest-hint" hidden>${t('hintText')}</p></div></aside><div>${editorMarkup(!practice)}<article class="card" style="margin-top:20px"><h3>${t('hintBot')}</h3><p>${t('hintSubtitle')}</p><form id="hint-form" style="display:flex;gap:10px;margin-top:15px"><label class="sr-only" for="hint-question">${t('ask')}</label><input id="hint-question" placeholder="${t('ask')}" maxlength="300" style="min-width:0;flex:1" required><button class="button small">${t('askButton')}</button></form><p id="hint-answer" class="hint" aria-live="polite">${t('tip')}</p><small class="meta">${t('hintDisclaimer')}</small></article></div></div>`;
 }
 function renderFooter() {
-  document.querySelector('#footer').innerHTML = `<div class="container"><div class="footer-grid"><div><a class="brand" href="#home"><img src="assets/logo.svg" alt="" width="26" height="26"><span>Code<span>Play</span></span></a><p>${t('footerText')}</p></div><div><h3>${t('explore')}</h3><div class="footer-links"><a href="#quests">${t('quests')}</a><a href="#pricing">${t('pricing')}</a><a href="#" data-info="community">${t('leaderboard')}</a><a href="#community">${t('community')}</a></div></div><div><h3>${t('company')}</h3><div class="footer-links">${['about', 'help', 'privacy', 'terms', 'accessibility'].map(key => `<a href="#" data-info="${key}">${t(key)}</a>`).join('')}</div></div><form class="newsletter"><h3>${t('newsletterTitle')}</h3><p>${t('newsletterText')}</p><label for="email">${t('email')}</label><div class="newsletter-row"><input id="email" type="email" placeholder="you@example.com" disabled><button type="button" class="button small" disabled>${t('join')}</button></div><label class="consent"><input type="checkbox" disabled><span>${t('consent')} <a class="text-link" href="#" data-info="privacy">${t('privacy')}</a></span></label></form></div><div class="copyright"><span>© ${new Date().getFullYear()} CodePlay. ${t('rights')}</span><span>${t('made')}</span></div></div>`;
+  document.querySelector('#footer').innerHTML = `<div class="container"><div class="footer-grid"><div><a class="brand" href="#home"><img src="assets/logo.svg" alt="" width="26" height="26"><span>Code<span>Play</span></span></a><p>${t('footerText')}</p></div><div><h3>${t('explore')}</h3><div class="footer-links"><a href="#quests">${t('quests')}</a><a href="#pricing">${t('pricing')}</a><a href="#" data-info="community">${t('leaderboard')}</a><a href="#community">${t('community')}</a></div></div><div><h3>${t('company')}</h3><div class="footer-links">${['about', 'help', 'contact', 'privacy', 'terms', 'accessibility'].map(key => `<a href="#" data-info="${key}">${t(key)}</a>`).join('')}</div></div><form class="newsletter"><h3>${t('newsletterTitle')}</h3><p>${t('newsletterText')}</p><label for="email">${t('email')}</label><div class="newsletter-row"><input id="email" type="email" placeholder="you@example.com" disabled><button type="button" class="button small" disabled>${t('join')}</button></div><label class="consent"><input type="checkbox" disabled><span>${t('consent')} <a class="text-link" href="#" data-info="privacy">${t('privacy')}</a></span></label></form></div><div class="copyright"><span>© ${new Date().getFullYear()} CodePlay. ${t('rights')}</span><span>${t('made')}</span></div></div>`;
 }
 function render(scroll = true) {
   stopRun();
@@ -244,6 +247,7 @@ function runCode() {
   worker.postMessage({ code });
 }
 function openInfo(kind) {
+  if (kind === 'contact') { openContact(); return; }
   const info = { pro: ['pro', 'proInfo'], community: ['community', 'communityInfo'], about: ['about', 'aboutText'], help: ['help', 'helpText'], privacy: ['privacy', 'privacyText'], terms: ['terms', 'termsText'], accessibility: ['accessibility', 'accessibilityText'], roadmap: ['coming', 'unavailable'] }[kind] || ['help', 'helpText'];
   document.querySelector('#modal-content').innerHTML = `<h2>${t(info[0])}</h2><p>${t(info[1])}</p>${kind === 'privacy' ? `<button class="button secondary" id="clear-progress">${t('resetProgress')}</button>` : kind === 'pro' || kind === 'roadmap' ? primary('quest') : ''}`;
   modal.showModal();
@@ -260,6 +264,39 @@ function openInfo(kind) {
       render(false);
       showNotice(t('resetDone'));
     });
+  });
+}
+function openContact() {
+  const fa = state.language === 'fa';
+  const text = (en, persian) => fa ? persian : en;
+  const content = document.querySelector('#modal-content');
+  content.innerHTML = `<h2>${text('Contact us', 'تماس با ما')}</h2><p>${text('Send us your question or feedback.', 'پرسش یا پیشنهادت را برای ما بفرست.')}</p><form id="contact-form" class="account-form"><label>${text('Name', 'نام')}<input name="name" required maxlength="60" autocomplete="name"></label><label>${text('Email', 'ایمیل')}<input name="email" type="email" required maxlength="254" autocomplete="email" dir="ltr"></label><label>${text('Message', 'پیام')}<textarea class="answer-input" name="message" required minlength="10" maxlength="5000" rows="5"></textarea></label><p id="contact-status" role="status" aria-live="polite"></p><button class="button" type="submit">${text('Send message', 'ارسال پیام')}</button></form>`;
+  modal.showModal();
+  const form = content.querySelector('form');
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const status = form.querySelector('#contact-status');
+    const button = form.querySelector('button');
+    const name = form.elements.name.value.trim();
+    const email = form.elements.email.value.trim();
+    const message = form.elements.message.value.trim();
+    if (!name || !email || message.length < 10) {
+      status.textContent = text('Enter your name, a valid email, and a message of at least 10 characters.', 'نام، ایمیل معتبر و پیامی با حداقل ۱۰ نویسه وارد کن.');
+      return;
+    }
+    button.disabled = true;
+    status.textContent = text('Sending...', 'در حال ارسال…');
+    try {
+      const response = await fetch(`${siteConfig.url}/rest/v1/contact_messages`, {
+        method: 'POST', headers: { apikey: siteConfig.publishableKey, Authorization: `Bearer ${siteConfig.publishableKey}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ name, email, message })
+      });
+      if (!response.ok) throw new Error('Request failed');
+      form.reset();
+      status.textContent = text('Your message was sent successfully.', 'پیامت با موفقیت ارسال شد.');
+    } catch {
+      status.textContent = text('Could not send your message. Please check your connection and try again.', 'ارسال پیام انجام نشد. اتصال اینترنت را بررسی کن و دوباره تلاش کن.');
+    } finally { button.disabled = false; }
   });
 }
 function bindPage() {

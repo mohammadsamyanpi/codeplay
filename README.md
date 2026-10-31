@@ -52,3 +52,7 @@ Never put `SUPABASE_SECRET_KEY` in this repository or in a browser. Rotate the s
 ## Sources and assets
 
 Learning format research and primary references are recorded in [RESEARCH.md](RESEARCH.md). Lessons are original bilingual content. Existing hero and robot images were extracted from the original supplied design. Vazirmatn uses the SIL Open Font License in `assets/OFL.txt`. Persona stories remain explicitly illustrative, rather than customer reviews.
+
+### Contact form (CP-105)
+
+Run `supabase/contact_messages.sql` in the Supabase SQL Editor before enabling the contact form. If `public.contact_messages` already exists, inspect its columns and existing RLS policies first and adapt the migration: `CREATE TABLE IF NOT EXISTS` does not change an existing schema or remove other policies. The browser inserts only name, email, and message using the publishable key; it has no read access under this migration. Verify an anonymous submission appears in the table and anonymous reads fail. Public submissions can be abused; configure server-side anti-spam/rate limits before relying on the form at scale.
